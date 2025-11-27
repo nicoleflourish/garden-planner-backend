@@ -8,7 +8,13 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: process.env.FRONTEND_URL || '*'
+origin: [
+    process.env.FRONTEND_URL || 'http://localhost:3000',
+    'https://garden-planner-frontend.onrender.com',
+    'https://www.flourishgardensolutions.com',
+    'https://flourishgardensolutions.com'
+  ],
+  credentials: true
 }));
 app.use(express.json());
 
