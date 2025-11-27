@@ -11,7 +11,7 @@ class GoogleSheetsService {
       const response = await this.sheets.spreadsheets.values.get({
         spreadsheetId: sheetId,
         range: 'Sheet1!A2:I', // Adjust if your sheet has a different name
-        key: process.env.GOOGLE_API_KEY || 'AIzaSyDummyKeyForPublicSheets' // Optional for public sheets
+      
       });
       
       const rows = response.data.values;
