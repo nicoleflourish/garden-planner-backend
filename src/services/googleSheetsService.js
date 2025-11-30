@@ -15,7 +15,7 @@ class GoogleSheetsService {
       
       const response = await this.sheets.spreadsheets.values.get({
         spreadsheetId: sheetId,
-        range: 'Sheet1!A2:I1000', // Get up to 1000 rows
+        range: 'Sheet1!A2:J1000', // Get up to 1000 rows
         key: apiKey
       });
       
@@ -42,7 +42,8 @@ class GoogleSheetsService {
             maxWeeksOutside: parseInt(row[5]) || 3,
             size: row[6] || 'M',
             spacing: parseFloat(row[7]) || 3,
-            category: row[8] || 'Vegetable'
+            category: row[8] || 'Vegetable',
+            perennial: row[9] === 'TRUE' || row[9] === true || false
           };
         })
         .filter(plant => plant !== null);
