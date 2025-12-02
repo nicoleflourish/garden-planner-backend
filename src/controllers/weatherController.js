@@ -1,10 +1,10 @@
 const weatherService = require('../services/weatherService');
 
-// In-memory cache (replace with Redis in production)
+// In-memory cache
 const cache = new Map();
-const CACHE_TTL = 30 * 24 * 60 * 60 * 1000; // 30 days
+const CACHE_TTL = 6 * 60 * 60 * 1000; // 6 hours
 
-exports.getWeatherByZip = async (req, res, next) => {
+const getWeatherData = async (req, res) => {
   try {
     const { zipCode } = req.params;
     
@@ -21,8 +21,11 @@ exports.getWeatherByZip = async (req, res, next) => {
     const cached = cache.get(cacheKey);
     
     if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+      console.log(`✓ Cache HIT: ${zipCode}`);
       return res.json({ ...cached.data, cached: true });
     }
+    
+    console.log(`✗ Cache MISS: ${zipCode} - Fetching from API`);
     
     // Fetch from weather service
     const weatherData = await weatherService.fetchWeatherData(zipCode);
@@ -36,12 +39,20 @@ exports.getWeatherByZip = async (req, res, next) => {
     res.json({ ...weatherData, cached: false });
     
   } catch (error) {
+    console.error('Weather controller error:', error);
+    
     if (error.message === 'Zip code not found') {
       return res.status(404).json({
         error: 'Not found',
-        message: error.message
+        message: 'Zip code not found'
       });
     }
-    next(error);
+    
+    res.status(500).json({ 
+      error: 'Failed to fetch weather data',
+      message: error.message 
+    });
   }
 };
+
+module.exports = { getWeatherData };
